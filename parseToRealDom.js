@@ -1,0 +1,33 @@
+/**
+ * virtual dom to real dom
+ * 给指定的container添加子节点：
+ * 若是数字类型就转化为字符串
+ * 若是字符串类型就转化为文本节点
+ * 若是普通的dom，就根据标签tag，属性attr，子节点child创建真实dom结构
+ */
+function render(vnode, container) {
+  container.appendChild(_render(vnode));
+}
+
+function _render(vnode) {
+  // 如果是数字类型转化为字符串
+  if (typeof vnode === "number") {
+    vnode = String(vnode);
+  }
+  // 字符串类型直接就是文本节点
+  if (typeof vnode === "string") {
+    return document.createTextNode(vnode);
+  }
+  // 普通DOM
+  const dom = document.createElement(vnode.tag);
+  if (vnode.attrs) {
+    // 遍历属性
+    Object.keys(vnode.attrs).forEach(key => {
+      const value = vnode.attrs[key];
+      dom.setAttribute(key, value);
+    });
+  }
+  // 子数组进行递归操作
+  vnode.children.forEach(child => render(child, dom));
+  return dom;
+}
